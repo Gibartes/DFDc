@@ -24,6 +24,18 @@ struct list_head{
 /* iterate over a list */
 #define list_cursor_update(cursor,head) \
     for(cursor=(head)->next;cursor!=(head);cursor=cursor->next)
+/* list_next_entry - get the next element in lis */
+#define list_next_entry(pos,member) \
+	list_entry((pos)->member.next, typeof(*(pos)), member)
+/* list_prev_entry - get the prev element in list */
+#define list_prev_entry(pos, member) \
+	list_entry((pos)->member.prev, typeof(*(pos)), member)
+/* iterate over a list */
+#define list_for_each(pos, head) \
+	for (pos = (head)->next; pos != (head); pos = pos->next)
+/* iterate over a list backwards */
+#define list_for_each_prev(pos, head) \
+	for (pos = (head)->prev; pos != (head); pos = pos->prev)
 
 /* initialize list head */
 static inline void init_list_head(struct list_head *list){
@@ -92,4 +104,34 @@ static inline int list_is_last(const struct list_head *list,const struct list_he
 /* Tests whether list is empty */
 static inline int list_empty(const struct list_head *head){
     return head->next == head;
+}
+/* cut a list into two, before given entry */
+static inline void list_cut(struct list_head *list,struct list_head *head,struct list_head *entry){
+	if(head->next == entry){
+		init_list_head(list);
+		return;
+	}
+	list->next = head->next;
+	list->next->prev = list;
+	list->prev = entry->prev;
+	list->prev->next = list;
+	head->next  = entry;
+	entry->prev = head;
+}
+/* list_splice - join two lists (stacks) */
+static inline void __list_splice(const struct list_head *list,struct list_head *prev,struct list_head *next){
+	struct list_head *first = list->next;
+	struct list_head *last  = list->prev;
+	first->prev = prev;
+	prev->next  = first;
+	last->next  = next;
+	next->prev  = last;
+}
+/* list_splice - join two lists (stacks) */
+static inline void list_splice(const struct list_head *list,struct list_head *head){
+	if (!list_empty(list)){__list_splice(list,head,head->next);}
+}
+/* list_splice_tail - join two lists, each list being a queue */
+static inline void list_splice_tail(const struct list_head *list,struct list_head *head){
+	if (!list_empty(list)){__list_splice(list,head->prev,head);}
 }
