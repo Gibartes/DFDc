@@ -1,6 +1,6 @@
 #include <edge.h>
 
-// Allocate edge in memory
+// Allocate an edge in memory
 edge_edge *edge_init(void){
 	edge_edge *temp;
 	list_head(child);
@@ -12,7 +12,7 @@ edge_edge *edge_init(void){
 	child.edge  = temp;
 	return temp;
 }
-// Unallocate edge in memory
+// Unallocate an edge in memory
 uint8_t edge_free(edge_edge *edge){
 	if(edge!=NULL){
 		memset(edge,0,sizeof(edge_edge));
@@ -81,8 +81,8 @@ static INLINE void __edge_set_friend(edge_edge *edge,edge_edge *new){
 		.head = head
 	};
 	list_add_tail(&chain.head,&edge->friend.head);
-	edge->numLow++;
-	new->numHigh++;
+	edge->numFriend++;
+	new->numFriend++;
 }
 static INLINE void __edge_farewell(edge_edge *left,edge_edge *right){
 	struct list_chain *hi;
@@ -92,8 +92,8 @@ static INLINE void __edge_farewell(edge_edge *left,edge_edge *right){
 	if(hi!=NULL && lo!=NULL){
 		list_del(&hi->head);
 		list_del(&lo->head);
-		high->numLow--;
-		low->numHigh--;
+		left->numFriend--;
+		right->numFriend--;
 	}
 }
 

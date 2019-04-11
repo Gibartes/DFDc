@@ -35,6 +35,7 @@ typedef struct __edge{
 	uint64_t level;          // Current level
 	uint8_t  flag;           // Edge type
 	uint8_t  *name;			 // Edge name
+	uint64_t numFriend;      // The number of connected edge (friend)
 	uint64_t numHigh;        // The number of connected edge (Parent)
 	uint64_t numLow;         // The number of connected edge (Child)
 	struct list_chain friend;// The list of friend edge (neighbour)
